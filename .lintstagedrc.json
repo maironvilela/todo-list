@@ -1,5 +1,5 @@
 {
-    "*.ts(x)": [
+    "*.{ts,tsx}": [
        "eslint src/** --fix"
      ]
 }

@@ -1,0 +1,24 @@
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 20rem;
+    background-color: var(--gray-700);
+    color: var(--gray-100);
+}
+
+.container h1{
+    font-size: 4rem;
+    color: var(--blue);
+    padding-bottom: 1rem;
+
+    span{
+        color: var(--purple-dark);
+    }
+}
+
+.container svg{
+     margin: 1rem;
+}
+
+
