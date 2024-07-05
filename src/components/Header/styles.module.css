@@ -1,4 +1,4 @@
-.container{
+.container {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -7,18 +7,16 @@
     color: var(--gray-100);
 }
 
-.container h1{
+.container h1 {
     font-size: 4rem;
     color: var(--blue);
     padding-bottom: 1rem;
 
-    span{
+    span {
         color: var(--purple-dark);
     }
 }
 
-.container svg{
-     margin: 1rem;
+.container svg {
+    margin: 1rem;
 }
-
-

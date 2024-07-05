@@ -1,10 +1,13 @@
+/*@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');**/
+
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding:0;
- }
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 :root {
+    --white: #fff;
     --gray-100: #f2f2f2;
     --gray-200: #d9d9d9;
     --gray-300: #808080;
@@ -21,26 +24,26 @@
 
     --danger: #e25858;
 
- --sm: 1.2rem;
- --md: 1.4rem;
- --lg: 1.6rem;
+    --sm: 1.2rem;
+    --md: 1.4rem;
+    --lg: 1.6rem;
 }
 
 html {
-  font-size: 62.5%;
-  overflow-x: hidden;
+    font-size: 62.5%;
+    overflow-x: hidden;
 }
 
 body {
-  height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizelegibility;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
- /*background-color: #333333; */
- background: var(--gray-400 );
+    height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizelegibility;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    background: var(--gray-700);
+    font-family: 'Inter', sans-serif;
 }
 
 button {
-  cursor: pointer;
+    cursor: pointer;
 }

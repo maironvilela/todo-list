@@ -9,7 +9,9 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "prepare": "husky",
-    "commit": "cz"
+    "commit": "cz",
+    "lint-staged": "eslint src --max-warnings=0 --fix"
+
   },
   "lint-staged": {
     "{src,test}/**/*.{js,ts,jsx,tsx}": ["npm run lint", "npm run style"]
