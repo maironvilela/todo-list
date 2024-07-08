@@ -1,0 +1,60 @@
+.container {
+    padding: 1.6rem;
+    min-width: 100%;
+}
+
+.task-item {
+    list-style-type: none;
+    padding: 1.6rem;
+    min-width: 100%;
+    display: flex;
+    gap: 1.6rem;
+    background-color: var(--gray-500);
+}
+
+.task-item + .task-item {
+    margin-top: 0.8rem;
+}
+
+.task-item span {
+    color: var(--gray-100);
+    font-size: 1.4rem;
+}
+span.task-finished {
+    text-decoration: line-through;
+    color: var(--gray-300);
+}
+
+.trash-button {
+    margin-left: auto;
+}
+.trash-button svg {
+    fill: var(--gray-300);
+    transition: fill 0.5s;
+    width: 1.8rem;
+    height: 1.8rem;
+    margin-left: auto;
+}
+
+.trash-button svg:hover {
+    fill: var(--danger);
+}
+
+.uncheck-button,
+.check-button,
+.trash-button {
+    border: none;
+    background-color: transparent;
+}
+
+.uncheck-button svg,
+.check-button svg {
+    fill: var(--blue);
+    transition: all 1s;
+    width: 1.8rem;
+    height: 1.8rem;
+}
+
+.uncheck-button svg:hover {
+    fill: var(--purple-dark);
+}

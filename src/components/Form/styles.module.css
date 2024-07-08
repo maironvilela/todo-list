@@ -12,11 +12,11 @@
     color: var(--gray-100);
     flex: 1;
     font-size: 1.6rem;
-    padding: 1.6rem;
+    padding: 0 1rem;
 }
 
 .container input:focus {
-    outline: solid 2px var(--blue);
+    outline: solid 1px var(--blue);
 }
 
 .container button:hover {
@@ -32,6 +32,12 @@
     flex-direction: row;
     font-weight: bold;
     gap: 0.8rem;
-    padding: 1.6rem;
+    padding: 1.8rem;
     transition: background-color 1s;
+    border: none;
+}
+.container button svg {
+    fill: #f2f2f2;
+    width: 1.6rem;
+    height: 1.6rem;
 }

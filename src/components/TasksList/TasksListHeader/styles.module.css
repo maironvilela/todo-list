@@ -1,0 +1,46 @@
+.container {
+    display: flex;
+    padding: 1.6rem;
+    width: 100vw;
+}
+
+.tasks-created {
+    color: var(--blue);
+    font-size: 1.4rem;
+    margin-top: 1rem;
+}
+
+.tasks-created span {
+    border-radius: 999px;
+    background-color: var(--gray-400);
+    color: var(--gray-100);
+    font-size: 1.2rem;
+    margin-left: 0.8rem;
+    font-weight: bold;
+    padding: 2px 8px;
+}
+
+.tasks-created strong {
+    color: var(--purple);
+    font-size: 1.4rem;
+}
+
+.tasks-completed {
+    margin-top: 1rem;
+    margin-left: auto;
+}
+
+.tasks-completed strong {
+    color: var(--purple-dark);
+    font-size: 1.4rem;
+}
+
+.tasks-completed span {
+    margin-left: 0.8rem;
+    border-radius: 100%;
+    color: var(--gray-100);
+    padding: 2px 8px;
+    background-color: var(--gray-400);
+    font-size: 1.2rem;
+    font-weight: bold;
+}

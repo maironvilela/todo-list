@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 20rem;
+    min-height: 18rem;
     background-color: var(--gray-700);
     color: var(--gray-100);
 }
@@ -11,10 +11,11 @@
     font-size: 4rem;
     color: var(--blue);
     padding-bottom: 1rem;
+}
 
-    span {
-        color: var(--purple-dark);
-    }
+.container h1 span {
+    color: var(--purple-dark);
+    font-size: 4rem;
 }
 
 .container svg {
