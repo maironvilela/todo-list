@@ -4,3 +4,13 @@
     flex-direction: column;
     margin: 0 1.6rem;
 }
+
+.content {
+    width: 100%;
+}
+
+@media (width > 1024px) {
+    .content {
+        width: 1200px;
+    }
+}

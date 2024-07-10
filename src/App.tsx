@@ -1,9 +1,10 @@
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useContext, useEffect, useState } from 'react';
 import styles from './app.module.css';
 import { Form } from './components/Form';
 import { Header } from './components/Header';
 import { TasksList } from './components/TasksList/index';
 import { v4 as uuidv4 } from 'uuid';
+import { DialogContext } from './context/dialog';
 
 type ToDoListTypes = {
     id: string;
@@ -27,27 +28,38 @@ function App() {
             isFinished: false,
         },
     ]);
+    const { isLoader, toggleIsLoader, toggleDialog, setMessage, setHandle } =
+        useContext(DialogContext);
 
     useEffect(() => {
-        const result = toDoList.reduce(
-            (accumulator, task) => {
-                if (task.isFinished === true) {
-                    accumulator.completedTasks = accumulator.completedTasks + 1;
-                } else {
-                    accumulator.pendingTasks = accumulator.pendingTasks + 1;
-                }
-                return accumulator;
-            },
-            { pendingTasks: 0, completedTasks: 0 }
-        );
+        if (!isLoader) setInputValue('');
+    }, [isLoader]);
 
-        setNumberOfTasksCompleted(result.completedTasks);
-        setNumberOfTasksPending(result.pendingTasks);
+    useEffect(() => {
+        getSummaryOfTaskStatus();
+
+        function getSummaryOfTaskStatus() {
+            const result = toDoList.reduce(
+                (accumulator, task) => {
+                    if (task.isFinished === true) {
+                        accumulator.completedTasks =
+                            accumulator.completedTasks + 1;
+                    } else {
+                        accumulator.pendingTasks = accumulator.pendingTasks + 1;
+                    }
+                    return accumulator;
+                },
+                { pendingTasks: 0, completedTasks: 0 }
+            );
+
+            setNumberOfTasksCompleted(result.completedTasks);
+            setNumberOfTasksPending(result.pendingTasks);
+        }
     }, [toDoList]);
 
+    /*
     const handleAddTask = (event: MouseEvent<HTMLButtonElement>): void => {
         event.preventDefault();
-
         if (inputValue.trim() === '') {
             alert('Favor, informe uma tarefa');
             setInputValue('');
@@ -69,6 +81,30 @@ function App() {
 
         setToDoList([...toDoList, newTask]);
         setInputValue('');
+    };*/
+
+    const addTask = () => {
+        console.log('AddTask');
+
+        const newTask = {
+            id: uuidv4(),
+            task: inputValue,
+            isFinished: false,
+        };
+
+        setToDoList([...toDoList, newTask]);
+        setInputValue('');
+    };
+
+    const handleShowConfirmationDialog = (
+        // todo: nome da função
+        event: MouseEvent<HTMLButtonElement>
+    ): void => {
+        event.preventDefault();
+        toggleIsLoader();
+        setMessage(`Deseja Adiconar a tarefa  ${inputValue}`);
+        setHandle({ execute: addTask });
+        toggleDialog();
     };
 
     const handleMarkTaskAsComplete = (
@@ -133,25 +169,27 @@ function App() {
 
     return (
         <div className={styles.container}>
-            <Header />
-            <Form
-                handleAddTask={handleAddTask}
-                setInputValue={setInputValue}
-                inputValue={inputValue}
-            />
-            <TasksList.Root>
-                <TasksList.Header
-                    numberOfTasksCompleted={numberOfTasksCompleted}
-                    numberOfTasksPending={numberOfTasksPending}
+            <div className={styles.content}>
+                <Header />
+                <Form
+                    handleAddTask={handleShowConfirmationDialog}
+                    setInputValue={setInputValue}
+                    inputValue={inputValue}
                 />
-                <TasksList.ToDoList
-                    handleMarkTaskAsComplete={handleMarkTaskAsComplete}
-                    handleRemoveTask={handleRemoveTask}
-                    toDoList={toDoList}
-                    isRender={toDoList.length > 0}
-                />
-                <TasksList.ListEmpty isRender={toDoList.length <= 0} />
-            </TasksList.Root>
+                <TasksList.Root>
+                    <TasksList.Header
+                        numberOfTasksCompleted={numberOfTasksCompleted}
+                        numberOfTasksPending={numberOfTasksPending}
+                    />
+                    <TasksList.ToDoList
+                        handleMarkTaskAsComplete={handleMarkTaskAsComplete}
+                        handleRemoveTask={handleRemoveTask}
+                        toDoList={toDoList}
+                        isRender={toDoList.length > 0}
+                    />
+                    <TasksList.ListEmpty isRender={toDoList.length <= 0} />
+                </TasksList.Root>
+            </div>
         </div>
     );
 }

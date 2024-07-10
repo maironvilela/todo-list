@@ -1,17 +1,18 @@
 .container {
-    padding: 1.6rem;
-    min-width: 100%;
+    display: flex;
+    flex: 1;
+    flex-direction: column; /* Ou row, dependendo da orientação desejada */
+    justify-content: space-between;
+    width: 100%;
 }
 
 .task-item {
     list-style-type: none;
     padding: 1.6rem;
-    min-width: 100%;
-    display: flex;
-    gap: 1.6rem;
     background-color: var(--gray-500);
+    display: flex;
+    gap: 0.8rem;
 }
-
 .task-item + .task-item {
     margin-top: 0.8rem;
 }

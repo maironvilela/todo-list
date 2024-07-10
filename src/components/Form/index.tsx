@@ -5,7 +5,6 @@ import { BiPlusCircle } from 'react-icons/bi';
 
 type FormProps = {
     inputValue: string;
-
     handleAddTask: (event: MouseEvent<HTMLButtonElement>) => void;
     setInputValue: (value: string) => void;
 };
