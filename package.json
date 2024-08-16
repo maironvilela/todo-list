@@ -11,6 +11,7 @@
     "prepare": "husky",
     "commit": "cz",
     "lint-staged": "eslint src --max-warnings=0 --fix"
+
   },
   "lint-staged": {
     "{src,test}/**/*.{js,ts,jsx,tsx}": [
@@ -19,7 +20,7 @@
     ]
   },
   "dependencies": {
-    "react": "^18.3.1",
+     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.2.1",
     "uuid": "^10.0.0"
@@ -38,8 +39,10 @@
     "husky": "^9.0.11",
     "lint-staged": "^15.2.7",
     "prettier": "3.3.2",
+    "supertest": "^7.0.0",
     "typescript": "^5.2.2",
-    "vite": "^5.3.1"
+    "vite": "^5.3.1",
+    "vitest": "^2.0.3"
   },
   "config": {
     "commitizen": {

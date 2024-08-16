@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MouseEvent, useContext, useEffect, useState } from 'react';
 import styles from './app.module.css';
 import { Form } from './components/Form';
@@ -14,6 +15,8 @@ type ToDoListTypes = {
 
 function App() {
     const [inputValue, setInputValue] = useState('');
+    const [idTaskToRemove, setIdTaskToRemove] = useState('');
+    const [idTaskToMarkComplete, setIdTaskToMarkComplete] = useState('');
     const [numberOfTasksCompleted, setNumberOfTasksCompleted] = useState(0);
     const [numberOfTasksPending, setNumberOfTasksPending] = useState(0);
     const [toDoList, setToDoList] = useState<ToDoListTypes[]>([
@@ -57,62 +60,67 @@ function App() {
         }
     }, [toDoList]);
 
-    /*
-    const handleAddTask = (event: MouseEvent<HTMLButtonElement>): void => {
-        event.preventDefault();
-        if (inputValue.trim() === '') {
-            alert('Favor, informe uma tarefa');
-            setInputValue('');
-            return;
-        }
+    useEffect(() => {
+        handleConfirmationDialogToRemoveTask(idTaskToRemove);
+    }, [idTaskToRemove]);
 
-        const confirmAddTask = confirm(`Adicionar tarefa ${inputValue}?`);
-
-        if (!confirmAddTask) {
-            setInputValue('');
-            return;
-        }
-
-        const newTask = {
-            id: uuidv4(),
-            task: inputValue,
-            isFinished: false,
-        };
-
-        setToDoList([...toDoList, newTask]);
-        setInputValue('');
-    };*/
-
-    const addTask = () => {
-        console.log('AddTask');
-
-        const newTask = {
-            id: uuidv4(),
-            task: inputValue,
-            isFinished: false,
-        };
-
-        setToDoList([...toDoList, newTask]);
-        setInputValue('');
-    };
-
-    const handleShowConfirmationDialog = (
-        // todo: nome da função
+    useEffect(() => {
+        handleMarkTaskAsComplete(idTaskToMarkComplete);
+    }, [idTaskToMarkComplete]);
+    const handleConfirmationDialogToSaveTasks = (
         event: MouseEvent<HTMLButtonElement>
     ): void => {
         event.preventDefault();
+
         toggleIsLoader();
-        setMessage(`Deseja Adiconar a tarefa  ${inputValue}`);
+        setMessage(`Deseja Adiconar a tarefa  ${inputValue}?`);
         setHandle({ execute: addTask });
         toggleDialog();
     };
+    const addTask = () => {
+        const newTask = {
+            id: uuidv4(),
+            task: inputValue,
+            isFinished: false,
+        };
 
-    const handleMarkTaskAsComplete = (
-        event: MouseEvent<HTMLButtonElement>,
-        id: string
-    ): void => {
-        event.preventDefault();
+        setToDoList([...toDoList, newTask]);
+        setInputValue('');
+    };
 
+    function handleConfirmationDialogToRemoveTask(id: string): void {
+        if (id.trim() === '') {
+            return;
+        }
+        const searchedTask = toDoList.find((task) => task.id === id);
+
+        if (!searchedTask) {
+            alert('Tarefa não encontrada - Remove');
+            return;
+        }
+
+        toggleIsLoader();
+        toggleDialog();
+        setHandle({ execute: remove });
+
+        setMessage(`Deseja remover a tarefa: ${searchedTask?.task}?`);
+    }
+
+    const remove = () => {
+        const newToDoList = toDoList.filter((task: ToDoListTypes) => {
+            if (task.id != idTaskToRemove) {
+                return task;
+            }
+        });
+
+        setToDoList(newToDoList);
+        alert('Tarefa removida com sucesso');
+    };
+
+    const handleMarkTaskAsComplete = (id: string): void => {
+        if (id.trim() === '') {
+            return;
+        }
         const searchedTask = toDoList.find((task) => task.id === id);
 
         if (!searchedTask) {
@@ -124,12 +132,16 @@ function App() {
             ? `Desmarcar conclusao da tarefa ${searchedTask.task}?`
             : `Marcar tarefa "${searchedTask.task}" como concluida?`;
 
-        if (!confirm(message)) {
-            return;
-        }
+        toggleIsLoader();
+        toggleDialog();
+        setMessage(message);
+        setHandle({ execute: togleMarkStatusTask });
+        setIdTaskToMarkComplete('');
+    };
 
+    const togleMarkStatusTask = () => {
         const newToDoList = toDoList.filter((task: ToDoListTypes) => {
-            if (task.id === searchedTask.id) {
+            if (task.id === idTaskToMarkComplete) {
                 task.isFinished = !task.isFinished;
             }
             return task;
@@ -138,41 +150,12 @@ function App() {
         setToDoList(newToDoList);
     };
 
-    const handleRemoveTask = (
-        event: MouseEvent<HTMLButtonElement>,
-        id: string
-    ): void => {
-        event.preventDefault();
-
-        const searchedTask = toDoList.find((task) => task.id === id);
-
-        if (!searchedTask) {
-            alert('Tarefa não encontrada');
-            return;
-        }
-
-        const message = `Deseja remover a tarefa ${searchedTask.task}`;
-
-        if (!confirm(message)) {
-            return;
-        }
-
-        const newToDoList = toDoList.filter((task: ToDoListTypes) => {
-            if (task.id != searchedTask.id) {
-                return task;
-            }
-        });
-
-        setToDoList(newToDoList);
-        alert('Tarefa removida com sucesso');
-    };
-
     return (
         <div className={styles.container}>
             <div className={styles.content}>
                 <Header />
                 <Form
-                    handleAddTask={handleShowConfirmationDialog}
+                    handleAddTask={handleConfirmationDialogToSaveTasks}
                     setInputValue={setInputValue}
                     inputValue={inputValue}
                 />
@@ -182,8 +165,8 @@ function App() {
                         numberOfTasksPending={numberOfTasksPending}
                     />
                     <TasksList.ToDoList
-                        handleMarkTaskAsComplete={handleMarkTaskAsComplete}
-                        handleRemoveTask={handleRemoveTask}
+                        handleMarkTaskAsComplete={setIdTaskToMarkComplete}
+                        handleRemoveTask={setIdTaskToRemove}
                         toDoList={toDoList}
                         isRender={toDoList.length > 0}
                     />

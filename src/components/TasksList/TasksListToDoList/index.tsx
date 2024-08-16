@@ -3,16 +3,12 @@ import styles from './styles.module.css';
 import { FaRegTrashCan } from 'react-icons/fa6';
 import { PiCheckCircleBold } from 'react-icons/pi';
 import { PiCircleBold } from 'react-icons/pi';
-import { MouseEvent } from 'react';
 
 type ToDoListProps = {
     toDoList: ToDoListTypes[];
     isRender: boolean;
-    handleMarkTaskAsComplete(
-        event: MouseEvent<HTMLButtonElement>,
-        id: string
-    ): void;
-    handleRemoveTask(event: MouseEvent<HTMLButtonElement>, id: string): void;
+    handleMarkTaskAsComplete(id: string): void;
+    handleRemoveTask(id: string): void;
 };
 
 export function TaskListToDoList({
@@ -32,8 +28,8 @@ export function TaskListToDoList({
                                     icon={PiCheckCircleBold}
                                     isRendered={task.isFinished}
                                     className={styles['check-button']}
-                                    onClick={(e) =>
-                                        handleMarkTaskAsComplete(e, task.id)
+                                    onClick={() =>
+                                        handleMarkTaskAsComplete(task.id)
                                     }
                                 />
 
@@ -41,8 +37,8 @@ export function TaskListToDoList({
                                     icon={PiCircleBold}
                                     isRendered={!task.isFinished}
                                     className={styles['uncheck-button']}
-                                    onClick={(e) =>
-                                        handleMarkTaskAsComplete(e, task.id)
+                                    onClick={() =>
+                                        handleMarkTaskAsComplete(task.id)
                                     }
                                 />
                                 <span
@@ -54,9 +50,7 @@ export function TaskListToDoList({
                                 <TasksList.Button
                                     icon={FaRegTrashCan}
                                     className={styles['trash-button']}
-                                    onClick={(e) =>
-                                        handleRemoveTask(e, task.id)
-                                    }
+                                    onClick={() => handleRemoveTask(task.id)}
                                 />
                             </li>
                         );
