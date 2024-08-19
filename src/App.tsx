@@ -2,44 +2,16 @@ import { FormEvent, useContext } from 'react';
 import styles from './app.module.css';
 import { Form } from './components/Form';
 import { Header } from './components/Header';
-import { TasksList, ToDo } from './components/TasksList/index';
+import { TasksList } from './components/TasksList/index';
 import { DialogContext } from './context/dialog';
-import { ToDoActions, useToDo } from './context/useToDo';
+import { Task, ToDoActions, useToDo } from './context/useToDo';
 
 
 function App() {
 
     const { toDoStates, dispatch } = useToDo()
-    const { toDos, numberOfTasksCompleted, numberOfTasksPending } = toDoStates
+    const { tasks, numberOfTasksCompleted, numberOfTasksPending } = toDoStates
     const { setMessage, toggleDialog, setHandle } = useContext(DialogContext);
-
-
-    function handleRemoveTask(id: string) {
-        if (id.trim() === '') {
-            return;
-        }
-
-        const searchedTask = toDos.find((task) => task.id === id);
-        if (!searchedTask) {
-            alert('Tarefa não encontrada - Remove');
-            return;
-        }
-
-        const message = `Deseja remover a tarefa: ${searchedTask?.task}?`;
-        openDialog(message);
-        setHandle({ execute: () => { dispatchRemoveTask(id) } });
-
-    }
-
-
-    function handleMarkTaskAsComplete(task: ToDo): void {
-        if (!task) {
-            return;
-        }
-        const message = task.isFinished ? `Marcar tarefa: ${task.task} como pendente?` : `Marcar tarefa  ${task.task}  como concluída?`;
-        openDialog(message);
-        setHandle({ execute: () => { dispatchMarkTaskAsComplete(task.id) } });
-    }
 
     function handleAddTask(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -57,9 +29,37 @@ function App() {
     }
 
 
+    function handleRemoveTask(id: string) {
+        if (id.trim() === '') {
+            return;
+        }
+
+        const searchedTask = tasks.find((task) => task.id === id);
+        if (!searchedTask) {
+            alert('Tarefa não encontrada - Remove');
+            return;
+        }
+
+        const message = `Deseja remover a tarefa: ${searchedTask?.task}?`;
+        openDialog(message);
+        setHandle({ execute: () => { dispatchRemoveTask(id) } });
+
+    }
+
+
+    function handleMarkTaskAsComplete(task: Task): void {
+        if (!task) {
+            return;
+        }
+        const message = task.isFinished ? `Marcar tarefa: ${task.task} como pendente?` : `Marcar tarefa  ${task.task}  como concluída?`;
+        openDialog(message);
+        setHandle({ execute: () => { dispatchMarkTaskAsComplete(task.id) } });
+    }
+
+
     function dispatchRemoveTask(id: string) {
         dispatch({
-            type: ToDoActions.REMOVE_TODO,
+            type: ToDoActions.REMOVE_TASK,
             payload: id
         })
 
@@ -67,13 +67,13 @@ function App() {
     function dispatchAddTask(task: string) {
         console.log
         dispatch({
-            type: "ADD_TODO",
+            type: "ADD_TASK",
             payload: task
         })
     }
     function dispatchMarkTaskAsComplete(id: string) {
         dispatch({
-            type: ToDoActions.CHECK_TODO_COMPLETE,
+            type: ToDoActions.CHECK_TASK_COMPLETE,
             payload: id
         })
     }
@@ -100,10 +100,10 @@ function App() {
                     <TasksList.ToDoList
                         handleMarkTaskAsComplete={handleMarkTaskAsComplete}
                         handleRemoveTask={handleRemoveTask}
-                        toDoList={toDos}
-                        isRender={toDos.length > 0}
+                        toDoList={tasks}
+                        isRender={tasks.length > 0}
                     />
-                    <TasksList.ListEmpty isRender={toDos.length <= 0} />
+                    <TasksList.ListEmpty isRender={tasks.length <= 0} />
                 </TasksList.Root>
             </div>
 

@@ -1,65 +1,58 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { v4 as uuidv4 } from 'uuid';
+import { useReducer } from 'react';
 
 export const ToDoActions = {
-    ADD_TODO: 'ADD_TODO',
-    REMOVE_TODO: 'REMOVE_TODO',
-    CHANGE_INPUT: 'CHANGE_INPUT',
-    CHECK_TODO_COMPLETE: 'CHECK_TODO_COMPLETE',
+    ADD_TASK: 'ADD_TASK',
+    REMOVE_TASK: 'REMOVE_TASK',
+    CHECK_TASK_COMPLETE: 'CHECK_TASK_COMPLETE',
 };
 
-type ToDo = {
+export type Task = {
     id: string;
     task: string;
     isFinished: boolean;
 };
 
 type StateTypes = {
-    toDos: ToDo[];
+    tasks: Task[];
     inputValue: string;
     numberOfTasksCompleted: number;
     numberOfTasksPending: number;
 };
 
-import { useReducer } from 'react';
-
 export function useToDo() {
     const initialState = {
-        toDos: [],
+        tasks: [],
         inputValue: '',
         numberOfTasksCompleted: 0,
         numberOfTasksPending: 0,
     };
+    const [toDoStates, dispatch] = useReducer(toDoReducer, initialState);
 
     function toDoReducer(state: StateTypes, action: any) {
         switch (action.type) {
-            case ToDoActions.ADD_TODO: {
-                console.log(state.inputValue);
-                return addToDo(state, action);
+            case ToDoActions.ADD_TASK: {
+                return addTask(state, action);
             }
-            case ToDoActions.CHANGE_INPUT: {
-                return changeInput(state, action);
-            }
-            case ToDoActions.CHECK_TODO_COMPLETE: {
+            case ToDoActions.CHECK_TASK_COMPLETE: {
                 return markTaskAsComplete(state, action);
             }
-            case ToDoActions.REMOVE_TODO: {
+            case ToDoActions.REMOVE_TASK: {
                 return removeTask(state, action);
             }
         }
         return state;
     }
 
-    const [toDoStates, dispatch] = useReducer(toDoReducer, initialState);
-
-    function addToDo(state: StateTypes, action: any) {
+    function addTask(state: StateTypes, action: any) {
         const newTask = {
             id: uuidv4(),
             task: action.payload,
             isFinished: false,
         };
 
-        const newTasks = [...state.toDos, newTask];
+        const newTasks = [...state.tasks, newTask];
 
         const { numberOfTasksCompleted, numberOfTasksPending } =
             getSummaryOfTaskStatus(newTasks);
@@ -69,22 +62,14 @@ export function useToDo() {
             inputValue: '',
             numberOfTasksCompleted,
             numberOfTasksPending,
-            toDos: newTasks,
+            tasks: newTasks,
         };
 
-        return newState;
-    }
-
-    function changeInput(state: StateTypes, action: any) {
-        const newState = {
-            ...state,
-            inputValue: action.payload,
-        };
         return newState;
     }
 
     function markTaskAsComplete(state: StateTypes, action: any) {
-        const searchedTask = state.toDos.map((task) => {
+        const searchedTask = state.tasks.map((task) => {
             if (task.id === action.payload) {
                 task.isFinished = !task.isFinished;
             }
@@ -97,12 +82,12 @@ export function useToDo() {
             ...state,
             numberOfTasksCompleted,
             numberOfTasksPending,
-            toDos: searchedTask,
+            tasks: searchedTask,
         };
     }
 
     function removeTask(state: StateTypes, action: any) {
-        const newTasks = state.toDos.filter((task) => {
+        const newTasks = state.tasks.filter((task) => {
             return task.id != action.payload;
         });
 
@@ -112,11 +97,11 @@ export function useToDo() {
             ...state,
             numberOfTasksCompleted,
             numberOfTasksPending,
-            toDos: newTasks,
+            tasks: newTasks,
         };
     }
 
-    function getSummaryOfTaskStatus(tasks: ToDo[]) {
+    function getSummaryOfTaskStatus(tasks: Task[]) {
         const result = tasks.reduce(
             (accumulator, task) => {
                 if (task.isFinished === true) {
