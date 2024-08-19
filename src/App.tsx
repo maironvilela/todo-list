@@ -1,163 +1,96 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { MouseEvent, useContext, useEffect, useState } from 'react';
+import { FormEvent, useContext } from 'react';
 import styles from './app.module.css';
 import { Form } from './components/Form';
 import { Header } from './components/Header';
-import { TasksList } from './components/TasksList/index';
-import { v4 as uuidv4 } from 'uuid';
+import { TasksList, ToDo } from './components/TasksList/index';
 import { DialogContext } from './context/dialog';
+import { ToDoActions, useToDo } from './context/useToDo';
 
-type ToDoListTypes = {
-    id: string;
-    task: string;
-    isFinished: boolean;
-};
 
 function App() {
-    const [inputValue, setInputValue] = useState('');
-    const [idTaskToRemove, setIdTaskToRemove] = useState('');
-    const [idTaskToMarkComplete, setIdTaskToMarkComplete] = useState('');
-    const [numberOfTasksCompleted, setNumberOfTasksCompleted] = useState(0);
-    const [numberOfTasksPending, setNumberOfTasksPending] = useState(0);
-    const [toDoList, setToDoList] = useState<ToDoListTypes[]>([
-        {
-            id: '1',
-            task: 'tarefa 01',
-            isFinished: false,
-        },
-        {
-            id: '2',
-            task: 'tarefa 02',
-            isFinished: false,
-        },
-    ]);
-    const { isLoader, toggleIsLoader, toggleDialog, setMessage, setHandle } =
-        useContext(DialogContext);
 
-    useEffect(() => {
-        if (!isLoader) setInputValue('');
-    }, [isLoader]);
+    const { toDoStates, dispatch } = useToDo()
+    const { toDos, numberOfTasksCompleted, numberOfTasksPending } = toDoStates
+    const { setMessage, toggleDialog, setHandle } = useContext(DialogContext);
 
-    useEffect(() => {
-        getSummaryOfTaskStatus();
 
-        function getSummaryOfTaskStatus() {
-            const result = toDoList.reduce(
-                (accumulator, task) => {
-                    if (task.isFinished === true) {
-                        accumulator.completedTasks =
-                            accumulator.completedTasks + 1;
-                    } else {
-                        accumulator.pendingTasks = accumulator.pendingTasks + 1;
-                    }
-                    return accumulator;
-                },
-                { pendingTasks: 0, completedTasks: 0 }
-            );
-
-            setNumberOfTasksCompleted(result.completedTasks);
-            setNumberOfTasksPending(result.pendingTasks);
-        }
-    }, [toDoList]);
-
-    useEffect(() => {
-        handleConfirmationDialogToRemoveTask(idTaskToRemove);
-    }, [idTaskToRemove]);
-
-    useEffect(() => {
-        handleMarkTaskAsComplete(idTaskToMarkComplete);
-    }, [idTaskToMarkComplete]);
-    const handleConfirmationDialogToSaveTasks = (
-        event: MouseEvent<HTMLButtonElement>
-    ): void => {
-        event.preventDefault();
-
-        toggleIsLoader();
-        setMessage(`Deseja Adiconar a tarefa  ${inputValue}?`);
-        setHandle({ execute: addTask });
-        toggleDialog();
-    };
-    const addTask = () => {
-        const newTask = {
-            id: uuidv4(),
-            task: inputValue,
-            isFinished: false,
-        };
-
-        setToDoList([...toDoList, newTask]);
-        setInputValue('');
-    };
-
-    function handleConfirmationDialogToRemoveTask(id: string): void {
+    function handleRemoveTask(id: string) {
         if (id.trim() === '') {
             return;
         }
-        const searchedTask = toDoList.find((task) => task.id === id);
 
+        const searchedTask = toDos.find((task) => task.id === id);
         if (!searchedTask) {
             alert('Tarefa não encontrada - Remove');
             return;
         }
 
-        toggleIsLoader();
-        toggleDialog();
-        setHandle({ execute: remove });
+        const message = `Deseja remover a tarefa: ${searchedTask?.task}?`;
+        openDialog(message);
+        setHandle({ execute: () => { dispatchRemoveTask(id) } });
 
-        setMessage(`Deseja remover a tarefa: ${searchedTask?.task}?`);
     }
 
-    const remove = () => {
-        const newToDoList = toDoList.filter((task: ToDoListTypes) => {
-            if (task.id != idTaskToRemove) {
-                return task;
-            }
-        });
 
-        setToDoList(newToDoList);
-        alert('Tarefa removida com sucesso');
-    };
-
-    const handleMarkTaskAsComplete = (id: string): void => {
-        if (id.trim() === '') {
+    function handleMarkTaskAsComplete(task: ToDo): void {
+        if (!task) {
             return;
         }
-        const searchedTask = toDoList.find((task) => task.id === id);
+        const message = task.isFinished ? `Marcar tarefa: ${task.task} como pendente?` : `Marcar tarefa  ${task.task}  como concluída?`;
+        openDialog(message);
+        setHandle({ execute: () => { dispatchMarkTaskAsComplete(task.id) } });
+    }
 
-        if (!searchedTask) {
-            alert('Tarefa não encontrada');
+    function handleAddTask(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        const data = new FormData(event.currentTarget)
+        const task = data.get('task')?.toString()
+
+        if (!task) {
             return;
         }
 
-        const message = searchedTask.isFinished
-            ? `Desmarcar conclusao da tarefa ${searchedTask.task}?`
-            : `Marcar tarefa "${searchedTask.task}" como concluida?`;
+        openDialog(`Deseja Adicionar a tarefa  ${task}?`);
+        setHandle({ execute: () => { dispatchAddTask(task) } });
+        event.currentTarget.reset()
+    }
 
-        toggleIsLoader();
-        toggleDialog();
+
+    function dispatchRemoveTask(id: string) {
+        dispatch({
+            type: ToDoActions.REMOVE_TODO,
+            payload: id
+        })
+
+    }
+    function dispatchAddTask(task: string) {
+        console.log
+        dispatch({
+            type: "ADD_TODO",
+            payload: task
+        })
+    }
+    function dispatchMarkTaskAsComplete(id: string) {
+        dispatch({
+            type: ToDoActions.CHECK_TODO_COMPLETE,
+            payload: id
+        })
+    }
+
+
+
+    function openDialog(message: string) {
         setMessage(message);
-        setHandle({ execute: togleMarkStatusTask });
-        setIdTaskToMarkComplete('');
-    };
-
-    const togleMarkStatusTask = () => {
-        const newToDoList = toDoList.filter((task: ToDoListTypes) => {
-            if (task.id === idTaskToMarkComplete) {
-                task.isFinished = !task.isFinished;
-            }
-            return task;
-        });
-
-        setToDoList(newToDoList);
-    };
+        toggleDialog()
+    }
 
     return (
         <div className={styles.container}>
             <div className={styles.content}>
                 <Header />
                 <Form
-                    handleAddTask={handleConfirmationDialogToSaveTasks}
-                    setInputValue={setInputValue}
-                    inputValue={inputValue}
+                    handleAddTask={handleAddTask}
                 />
                 <TasksList.Root>
                     <TasksList.Header
@@ -165,16 +98,18 @@ function App() {
                         numberOfTasksPending={numberOfTasksPending}
                     />
                     <TasksList.ToDoList
-                        handleMarkTaskAsComplete={setIdTaskToMarkComplete}
-                        handleRemoveTask={setIdTaskToRemove}
-                        toDoList={toDoList}
-                        isRender={toDoList.length > 0}
+                        handleMarkTaskAsComplete={handleMarkTaskAsComplete}
+                        handleRemoveTask={handleRemoveTask}
+                        toDoList={toDos}
+                        isRender={toDos.length > 0}
                     />
-                    <TasksList.ListEmpty isRender={toDoList.length <= 0} />
+                    <TasksList.ListEmpty isRender={toDos.length <= 0} />
                 </TasksList.Root>
             </div>
+
         </div>
     );
+
 }
 
 export default App;

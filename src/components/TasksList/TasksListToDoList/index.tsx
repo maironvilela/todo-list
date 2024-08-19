@@ -1,15 +1,17 @@
-import { TasksList, ToDoListTypes } from '..';
+import { TasksList, ToDo } from '..';
 import styles from './styles.module.css';
 import { FaRegTrashCan } from 'react-icons/fa6';
 import { PiCheckCircleBold } from 'react-icons/pi';
 import { PiCircleBold } from 'react-icons/pi';
 
 type ToDoListProps = {
-    toDoList: ToDoListTypes[];
+    toDoList: ToDo[];
     isRender: boolean;
-    handleMarkTaskAsComplete(id: string): void;
+    handleMarkTaskAsComplete(task: ToDo): void;
     handleRemoveTask(id: string): void;
 };
+
+
 
 export function TaskListToDoList({
     toDoList,
@@ -29,7 +31,7 @@ export function TaskListToDoList({
                                     isRendered={task.isFinished}
                                     className={styles['check-button']}
                                     onClick={() =>
-                                        handleMarkTaskAsComplete(task.id)
+                                        handleMarkTaskAsComplete(task)
                                     }
                                 />
 
@@ -38,7 +40,7 @@ export function TaskListToDoList({
                                     isRendered={!task.isFinished}
                                     className={styles['uncheck-button']}
                                     onClick={() =>
-                                        handleMarkTaskAsComplete(task.id)
+                                        handleMarkTaskAsComplete(task)
                                     }
                                 />
                                 <span

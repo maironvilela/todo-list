@@ -1,25 +1,24 @@
-import { MouseEvent } from 'react';
+import { FormEvent } from 'react';
 import { Button } from '../Button';
 import styles from './styles.module.css';
 import { BiPlusCircle } from 'react-icons/bi';
 
+
 type FormProps = {
-    inputValue: string;
-    handleAddTask: (event: MouseEvent<HTMLButtonElement>) => void;
-    setInputValue: (value: string) => void;
+    handleAddTask: (event: FormEvent<HTMLFormElement>) => void;
 };
 
-export function Form({ handleAddTask, inputValue, setInputValue }: FormProps) {
+export function Form({ handleAddTask }: FormProps) {
+
     return (
-        <form className={styles['container']}>
+        <form onSubmit={handleAddTask} className={styles['container']}>
             <input
                 placeholder="Adicione uma nova tarefa"
-                onChange={(e) => setInputValue(e.target.value)}
-                value={inputValue}
+                name="task"
             />
-            <Button type="submit" onClick={handleAddTask}>
+            <Button type="submit"  >
                 Criar <BiPlusCircle />
             </Button>
-        </form>
+        </form >
     );
 }

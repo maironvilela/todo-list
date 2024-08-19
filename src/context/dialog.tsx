@@ -2,19 +2,16 @@ import React, { createContext, useState } from 'react';
 import styles from './styles.module.css';
 import { Button } from '../components/Button';
 
+
+type Handletypes = {
+    execute: () => void
+}
+
 type DialogContextProps = {
     isOpen?: boolean;
     toggleDialog(): void;
-    toggleIsLoader(): void;
     setMessage(message: string): void;
-    isLoader: boolean;
-    setHandle(handle: handleProps): void;
-    setHandleCancelDialog(handle: handleProps): void;
-};
-
-type CallbackComNumero = () => void;
-type handleProps = {
-    execute: CallbackComNumero;
+    setHandle(handle: Handletypes): void;
 };
 
 const DialogContext = createContext<DialogContextProps>(
@@ -24,45 +21,37 @@ const DialogContext = createContext<DialogContextProps>(
 const DialogProvider = ({ children }: { children: React.ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState('');
-    const [isLoader, setIsLoader] = useState(false);
-    const [handle, setHandle] = useState<handleProps>();
-    const [handleCancelDialog, setHandleCancelDialog] = useState<handleProps>();
+    const [handle, setHandle] = useState<Handletypes>();
+
+
 
     const toggleDialog = () => {
-        setIsOpen(!isOpen);
-    };
-    const toggleIsLoader = () => {
-        setIsLoader(!isLoader);
+        setIsOpen(isOpen => !isOpen);
     };
 
     const handleConfirm = () => {
-        //todo: Nome da Função
         handle?.execute();
-        resetDialog();
+        toggleDialog()
     };
 
     const cancelDialog = () => {
-        // todo: Nome da Função
-        handleCancelDialog?.execute();
-        resetDialog();
+        toggleDialog()
     };
-
-    const resetDialog = () => {
-        toggleDialog();
-        toggleIsLoader();
-        setMessage('');
-    };
-
+    /*
+        const resetDialog = () => {
+            toggleDialog();
+            setMessage('');
+        };
+    */
     return (
         <DialogContext.Provider
             value={{
                 isOpen,
                 toggleDialog,
                 setMessage,
-                toggleIsLoader,
-                isLoader,
                 setHandle,
-                setHandleCancelDialog,
+
+
             }}
         >
             <>

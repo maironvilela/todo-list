@@ -4,7 +4,7 @@ import { TaskListHeader } from './TasksListHeader';
 import { TasksListRoot } from './TasksListRoot';
 import { TaskListToDoList } from './TasksListToDoList';
 
-export type ToDoListTypes = {
+export type ToDo = {
     id: string;
     task: string;
     isFinished: boolean;
